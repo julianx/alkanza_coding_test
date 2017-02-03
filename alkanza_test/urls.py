@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from github_co.views import CrawlUsersCo, CrawlPopularRepos
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^1/', CrawlUsersCo.as_view()),
+    url(r'^2/', CrawlPopularRepos.as_view()),
+
 ]
