@@ -13,7 +13,7 @@ class RepoManager(models.Manager):
         return self.filter().order_by('-stars')[:10]
 
     def get_colombian_repos(self):
-        return self.filter(User__location__name__contains="Colombia")
+        return self.filter(contributors__colombian=True)
 
     def get_popular_colombian_contributed_repos(self):
         return self.filter(contributors__colombian=True).order_by('-contributors')[:10]
