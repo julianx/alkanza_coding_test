@@ -1,3 +1,11 @@
 from django.contrib import admin
+from github_co.models import User, Repos, Location
 
-# Register your models here.
+
+class UserAdmin(admin.ModelAdmin):
+    raw_id_fields = ("repos", 'location')
+    search_fields = ('username', 'location')
+    list_display = ('username',)
+
+
+admin.site.register(User, UserAdmin)
