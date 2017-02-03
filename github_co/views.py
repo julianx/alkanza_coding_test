@@ -19,6 +19,7 @@ def create_user_and_repos(collaborator):
             location.save()
 
         user.location = location
+        user.save()
 
         collaborator_repos = collaborator.get_repos()
         for repo in collaborator_repos:
