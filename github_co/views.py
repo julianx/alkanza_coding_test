@@ -34,33 +34,31 @@ def crawl_users_co():
 
 
 def crawl popular_repos():
+    popular_repos = github.search_repositories(query="stars:>15000", sort="stars", order='desc')[:15]  # 162 total
 
+    for repo in popular_repos:
+        for collaborator in repo.get_collaborators():
+            user = User()
 
-popular_repos = github.search_repositories(query="stars:>15000", sort="stars", order='desc')[:15]  # 162 total
+            location = Location.objects.filter(name=collaborator.location).first()
+            if not location:
+                location = Location(name=collaborator.location)
+                location.save()
 
-for repo in popular_repos:
-    for collaborator in repo.get_collaborators():
-        user = User()
+            user.location = location
+            user.username = collaborator.login
 
-        location = Location.objects.filter(name=collaborator.location).first()
-        if not location:
-            location = Location(name=collaborator.location)
-            location.save()
+            collaborator_repos = collaborator.get_repos()
+            for repo in collaborator_repos:
 
-        user.location = location
-        user.username = collaborator.login
+                repository = Repos.objects.filter(name=repo.name).first()
+                if not repository:
+                    repository = Repos()
+                    repository.name = repo.name
+                    repository.stars = repo.stargazers_count
+                repository.save()
 
-        collaborator_repos = collaborator.get_repos()
-        for repo in collaborator_repos:
-
-            repository = Repos.objects.filter(name=repo.name).first()
-            if not repository:
-                repository = Repos()
-                repository.name = repo.name
-                repository.stars = repo.stargazers_count
-            repository.save()
-
-        user.save()  # NamedUser(login="enspdf")
+            user.save()  # NamedUser(login="enspdf")
 # users_co.get_repos()[0]
 #     Repository(full_name="enspdf/acat")
 #     Repository(full_name="enspdf/acat").name
