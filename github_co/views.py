@@ -7,33 +7,37 @@ from alkanza_test.settings import GITHUB_USERNAME, GITHUB_PASS
 github = Github(GITHUB_USERNAME, GITHUB_PASS)
 
 
+def create_user_and_repos(collaborator):
+    user = User.objects.filter(username=collaborator.login).first()
+    if not user:
+        user = User()
+        user.username = collaborator.login
+
+        location = Location.objects.filter(name=collaborator.location).first()
+        if not location:
+            location = Location(name=collaborator.location)
+            location.save()
+
+        user.location = location
+
+        collaborator_repos = collaborator.get_repos()
+        for repo in collaborator_repos:
+            repository = Repos.objects.filter(name=repo.name).first()
+            if not repository:
+                repository = Repos()
+                repository.name = repo.name
+                repository.stars = repo.stargazers_count
+                repository.save()
+            user.repos.add(repository)
+
+        user.save()
+
+
 class CrawlUsersCo(View):
     def get(self, request):
         users_co = github.search_users(query="location:colombia", sort='repositories', order='desc')
-        for api_user in users_co:
-            user = User.objects.filter(username=api_user.login).first()
-            if not user:
-                user = User()
-                user.username = api_user.login
-
-                location = Location.objects.filter(name=api_user.location).first()
-                if not location:
-                    location = Location(name=api_user.location)
-                    location.save()
-
-                user.location = location
-
-                collaborator_repos = api_user.get_repos()
-                for repo in collaborator_repos:
-                    repository = Repos.objects.filter(name=repo.name).first()
-                    if not repository:
-                        repository = Repos()
-                        repository.name = repo.name
-                        repository.stars = repo.stargazers_count
-                        repository.save()
-
-                user.save()
-
+        for collaborator in users_co:
+            create_user_and_repos(collaborator)
         return HttpResponse(0)
 
 
@@ -43,26 +47,6 @@ class CrawlPopularRepos(View):
 
         for repo in popular_repos:
             for collaborator in repo.get_collaborators():
-                user = User()
-
-                location = Location.objects.filter(name=collaborator.location).first()
-                if not location:
-                    location = Location(name=collaborator.location)
-                    location.save()
-
-                user.location = location
-                user.username = collaborator.login
-
-                collaborator_repos = collaborator.get_repos()
-                for repo in collaborator_repos:
-
-                    repository = Repos.objects.filter(name=repo.name).first()
-                    if not repository:
-                        repository = Repos()
-                        repository.name = repo.name
-                        repository.stars = repo.stargazers_count
-                    repository.save()
-
-                user.save()
+                create_user_and_repos(collaborator)
 
         return HttpResponse(0)
