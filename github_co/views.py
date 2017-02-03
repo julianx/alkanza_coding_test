@@ -33,7 +33,7 @@ def crawl_users_co():
             user.save()
 
 
-def crawl popular_repos():
+def crawl_popular_repos():
     popular_repos = github.search_repositories(query="stars:>15000", sort="stars", order='desc')[:15]  # 162 total
 
     for repo in popular_repos:
