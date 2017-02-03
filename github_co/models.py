@@ -10,7 +10,7 @@ class Location(models.Model):
 
 class RepoManager(models.Manager):
     def get_popular_repos(self):
-        return self.filter().order_by('-stars')[10]
+        return self.filter().order_by('-stars')[:10]
 
     def get_colombian_repos(self):
         return self.filter(User__location__name__contains="Colombia")
