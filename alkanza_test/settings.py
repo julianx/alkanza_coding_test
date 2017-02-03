@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+GITHUB_USERNAME = "julianx"
+GITHUB_PASS = "serlas3biergaF"
 
 # Application definition
 
