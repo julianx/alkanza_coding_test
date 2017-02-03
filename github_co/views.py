@@ -58,13 +58,4 @@ def crawl_popular_repos():
                     repository.stars = repo.stargazers_count
                 repository.save()
 
-            user.save()  # NamedUser(login="enspdf")
-# users_co.get_repos()[0]
-#     Repository(full_name="enspdf/acat")
-#     Repository(full_name="enspdf/acat").name
-#         'acat'
-#     reposample.stargazers_count
-#         0
-#     reposample.get_collaborators()
-#     for i in reposample.get_contributors():
-#         print("+1")
+            user.save()
