@@ -19,7 +19,7 @@ def create_user_and_repos(collaborator):
             location.save()
 
         user.location = location
-        if location.find("Colombia") > 0:
+        if user.location.name.lower().find("colombia") >= 0:
             user.colombian = True
 
         user.save()
