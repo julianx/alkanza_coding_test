@@ -5,7 +5,7 @@ from github_co.models import User, Repos, Location
 class UserAdmin(admin.ModelAdmin):
     raw_id_fields = ("repos", 'location')
     search_fields = ('username', 'location')
-    list_display = ('username',)
+    list_display = ('username', 'colombian')
 
 
 admin.site.register(User, UserAdmin)

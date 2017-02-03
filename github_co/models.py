@@ -16,7 +16,7 @@ class RepoManager(models.Manager):
         return self.filter(User__location__name__contains="Colombia")
 
     def get_popular_colombian_repos(self):
-        return self.filter().order_by('-contributors')[10]
+        return self.filter(contributors__colombian=True).order_by('-contributors')[:10]
 
 
 class Repos(models.Model):
@@ -24,8 +24,18 @@ class Repos(models.Model):
     stars = models.IntegerField()
     contributors = models.ManyToManyField('User', related_name='contributors', null=True, blank=True)
 
+    objects = RepoManager()
+
     def __str__(self):
         return "%s, Star gazers: %d" % (self.name, self.stars)
+
+
+class UserManager(models.Manager):
+    def fix_colombian_field(self):
+        for user in self.filter(colombian=False):
+            if user.location.name.lower().find("colombia") >= 0:
+                user.colombian = True
+                user.save()
 
 
 class User(models.Model):
@@ -33,6 +43,8 @@ class User(models.Model):
     repos = models.ManyToManyField(Repos)
     location = models.ForeignKey(Location)
     colombian = models.BooleanField(default=False)
+
+    objects = UserManager()
 
     def __str__(self):
         return self.username

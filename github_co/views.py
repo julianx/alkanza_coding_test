@@ -19,6 +19,9 @@ def create_user_and_repos(collaborator):
             location.save()
 
         user.location = location
+        if location.find("Colombia") > 0:
+            user.colombian = True
+
         user.save()
 
         collaborator_repos = collaborator.get_repos()
@@ -29,6 +32,9 @@ def create_user_and_repos(collaborator):
                 repository.name = repo.name
                 repository.stars = repo.stargazers_count
                 repository.save()
+                repository.contributors.add(user)
+                repository.save()
+
             user.repos.add(repository)
 
         user.save()
