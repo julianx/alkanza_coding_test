@@ -15,7 +15,7 @@ class RepoManager(models.Manager):
     def get_colombian_repos(self):
         return self.filter(User__location__name__contains="Colombia")
 
-    def get_popular_colombian_repos(self):
+    def get_popular_colombian_contributed_repos(self):
         return self.filter(contributors__colombian=True).order_by('-contributors')[:10]
 
 
@@ -36,6 +36,12 @@ class UserManager(models.Manager):
             if user.location.name.lower().find("colombia") >= 0:
                 user.colombian = True
                 user.save()
+
+    def fix_repo_linking(self):
+        for user in self.all():
+            for repo in user.repos.all():
+                repo.contributors.add(user)
+                repo.save()
 
 
 class User(models.Model):
